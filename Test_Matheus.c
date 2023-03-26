@@ -93,13 +93,13 @@ void visite(HEAP *arvore) {
 }
 
 //Inicia aqui
-bool encontraPos(HEAP *arvore){
+HEAP* encontraPos(HEAP *arvore){
    if(!existeNo(NoEsquerdo,arvore)){
-      //retorna posição esquerda
+      return arvore->esq;
    }
    else{
       if(!existeNo(NoDireito,arvore)){
-         //retorna posição direita
+         return arvore->dir;
       }
       else {
          return encontraPos(arvore->esq) && encontraPos(arvore->dir);
