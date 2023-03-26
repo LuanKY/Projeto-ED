@@ -92,11 +92,13 @@ void visite(HEAP *arvore) {
     printf("(%d)", arvore->item.chave);
 }
 
+//Inicia aqui
 bool encontraPos(HEAP *arvore, HEAP *local){
-   HEAP *aux = arvore;
+   /* if(!existeNo(NoDireito,arvore) && !existeNo(NoEsquerdo,arvore)){
+      return ;
+   } */
    if(existeNo(NoEsquerdo, arvore) && existeNo(NoDireito, arvore)){
-      aux = arvore->esq;
-      
+
    }
 }
 bool inserir(ITEM item, HEAP **arvore){
