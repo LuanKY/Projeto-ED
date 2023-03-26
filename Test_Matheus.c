@@ -92,8 +92,7 @@ void visite(HEAP *arvore) {
     printf("(%d)", arvore->item.chave);
 }
 
-//Inicia aqui
-HEAP* encontraPos(HEAP *arvore){
+/* HEAP* encontraPos(HEAP *arvore){
    if(!existeNo(NoEsquerdo,arvore)){
       return arvore->esq;
    }
@@ -105,21 +104,52 @@ HEAP* encontraPos(HEAP *arvore){
          return encontraPos(arvore->esq) && encontraPos(arvore->dir);
       }
    }
+} */
+void swap(ITEM *a, ITEM *b) {
+    ITEM temp = *a;
+    *a = *b;
+    *b = temp;
 }
+
 bool inserir(ITEM item, HEAP *arvore){
-   HEAP *pPai;
-   bool inseriu = true;
-   if(vazia(arvore))
+   if(vazia(arvore)){
       criarNo(item,arvore);
-   if(encontrarChave(item.chave, &pPai, arvore))
-         inseriu = false;
-   else {
-      
+   }
+   HEAP *pAtual = arvore;
+   while(1){
+      if(pAtual->esq == NULL){
+         pAtual->esq = arvore;
+         arvore->pai = pAtual;
+         break;
+      }
+      else if(pAtual->dir == NULL){
+         pAtual->dir = arvore;
+         arvore->pai = pAtual;
+         break;
+      }
+      else {
+         if(pAtual->esq->esq == NULL || pAtual ->esq->dir == NULL){
+            pAtual = pAtual->esq;
+         } else pAtual = pAtual->dir;
+      }
+   }
+   while(arvore->pai != NULL && arvore->item.chave > arvore->pai->item.chave) {
+      swap(&arvore->item, &arvore->pai->item);
+      arvore = arvore->pai;
    }
 }
 
-void heapify(HEAP *arvore){
+/* void heapify(HEAP *arvore){
    if(arvore->item.chave < arvore->esq->item.chave){
-      
+      HEAP *aux = arvore->esq;
+      if(aux->esq == NULL && aux->dir == NULL){
+         aux->pai = arvore->pai;
+         arvore->pai = aux;
+         arvore->esq == NULL;
+         aux->dir = arvore->dir;
+         arvore->dir = NULL;
+         aux->dir->pai = aux;
+      }
    }
-}
+} */
+
