@@ -114,6 +114,12 @@ bool inserir(ITEM item, HEAP *arvore){
    if(encontrarChave(item.chave, &pPai, arvore))
          inseriu = false;
    else {
-      criarNo(item, encontraPos(arvore));
+      
+   }
+}
+
+void heapify(HEAP *arvore){
+   if(arvore->item.chave < arvore->esq->item.chave){
+      
    }
 }
