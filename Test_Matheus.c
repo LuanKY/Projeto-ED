@@ -106,16 +106,14 @@ HEAP* encontraPos(HEAP *arvore){
       }
    }
 }
-bool inserir(ITEM item, HEAP **arvore){
+bool inserir(ITEM item, HEAP *arvore){
    HEAP *pPai;
    bool inseriu = true;
-   if(vazia(*arvore))
+   if(vazia(arvore))
       criarNo(item,arvore);
-   if(encontrarChave(item.chave, &pPai, *arvore))
+   if(encontrarChave(item.chave, &pPai, arvore))
          inseriu = false;
    else {
-      if(existeNo(NoEsquerdo, *arvore) && existeNo(NoDireito, *arvore)){
-         deslocar(NoEsquerdo, arvore);
-      }
+      criarNo(item, encontraPos(arvore));
    }
 }
