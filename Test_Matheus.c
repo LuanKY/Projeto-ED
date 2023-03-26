@@ -93,12 +93,17 @@ void visite(HEAP *arvore) {
 }
 
 //Inicia aqui
-bool encontraPos(HEAP *arvore, HEAP *local){
-   /* if(!existeNo(NoDireito,arvore) && !existeNo(NoEsquerdo,arvore)){
-      return ;
-   } */
-   if(existeNo(NoEsquerdo, arvore) && existeNo(NoDireito, arvore)){
-
+bool encontraPos(HEAP *arvore){
+   if(!existeNo(NoEsquerdo,arvore)){
+      //retorna posição esquerda
+   }
+   else{
+      if(!existeNo(NoDireito,arvore)){
+         //retorna posição direita
+      }
+      else {
+         return encontraPos(arvore->esq) && encontraPos(arvore->dir);
+      }
    }
 }
 bool inserir(ITEM item, HEAP **arvore){
