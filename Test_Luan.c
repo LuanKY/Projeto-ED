@@ -13,6 +13,7 @@ typedef struct {
 
 typedef struct estrutura {
   ITEM item;
+  int nivel;
   struct estrutura *esq;
   struct estrutura *dir;
   struct estrutura *pai;
@@ -57,9 +58,11 @@ void criarNo(ITEM item, HEAP **arvore) {
 
   *arvore = (HEAP*) malloc(sizeof(HEAP));
   (*arvore)->item = item;
+  (*arvore)->nivel = 0;
   (*arvore)->pai = NULL;
   (*arvore)->esq = NULL;
   (*arvore)->dir = NULL;
+
 }
 
 
@@ -110,9 +113,11 @@ bool adicionarFilho(ITEM item, DIRECAO direcao, HEAP *arvore) {
   if (direcao == NoEsquerdo) {
     criarNo(item, &(arvore->esq));
     arvore->esq->pai = arvore;
+    arvore->esq->nivel = arvore->esq->pai->nivel + 1;
   } else {
     criarNo(item, &(arvore->dir));
     arvore->dir->pai = arvore;
+    arvore->dir->nivel = arvore->dir->pai->nivel + 1;
   }
   return true;
 }
@@ -143,7 +148,7 @@ void inOrdem(HEAP *arvore, void (*visite)(HEAP*) ) {
 
 // Visita um NO da arvore, imprimindo o valor da chave entre parenteses
 void imprimir(HEAP *arvore) {
-  printf("(%d)", arvore->item.chave);
+  printf("\nChave do NO: (%d) Nivel do NO: (%d)", arvore->item.chave, arvore->nivel);
 }
 
 
@@ -151,7 +156,7 @@ void imprimir(HEAP *arvore) {
    que fará com que a arvore heap continue sendo completa ou quase completa, 
    apos isso, local recebe a posição de insercao */
 void encontraPos(HEAP *arvore, HEAP **local) {
-  *local = arvore; 
+*local = arvore; 
 
   if (!vazia(arvore)) {
     if (arvoreCompleta(arvore)) { // Possui dois filhos então entao deve procurar em suas sub-arvores
@@ -168,6 +173,12 @@ void encontraPos(HEAP *arvore, HEAP **local) {
   }
   return;
 }
+
+/* Teste da pos de insercao
+ITEM item;
+item.chave = 11;
+local->item.chave = item.chave;
+printf("(%d)", local->item.chave);*/
 
 
 /////////////////////////////////////////////////////
@@ -195,9 +206,11 @@ int main() {
           9       6
         8   7  5            
   */
-  encontraPos(arv, &local);
-  printf("(%d)", (*local)->item.chave);
+  // encontraPos(arv, &local);
+  // printf("(%d)", local->item.chave);
   // printf("//////////////////////\n");
+  
+  inOrdem(arv, imprimir);
 
   disposeArvore(arv);
   return 0;
