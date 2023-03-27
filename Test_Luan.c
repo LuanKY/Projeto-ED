@@ -150,8 +150,8 @@ void imprimir(HEAP *arvore) {
 /* Percorre a arvore ate encontrar a posicao de insercao, que sera a posicao
    que fará com que a arvore heap continue sendo completa ou quase completa, 
    apos isso, local recebe a posição de insercao */
-void encontraPos(HEAP *arvore, HEAP *local) {
-  local = arvore; 
+void encontraPos(HEAP *arvore, HEAP **local) {
+  *local = arvore; 
 
   if (!vazia(arvore)) {
     if (arvoreCompleta(arvore)) { // Possui dois filhos então entao deve procurar em suas sub-arvores
@@ -160,10 +160,10 @@ void encontraPos(HEAP *arvore, HEAP *local) {
       encontraPos(arvore->dir, local);
     }
     if (arvoreQuaseCompleta(arvore)) { // Possui um filho então então a posicao e o filho direito da arvore
-      local = arvore->dir; 
+      *local = arvore->dir; 
       return;
     }
-    local = arvore->esq; // Como nao possui filhos então então a posicao e o filho esquerdo da arvore
+    *local = arvore->esq; // Como nao possui filhos então então a posicao e o filho esquerdo da arvore
     return;
   }
   return;
@@ -195,10 +195,9 @@ int main() {
           9       6
         8   7  5            
   */
-  encontraPos(arv, local);
+  encontraPos(arv, &local);
+  printf("(%d)", (*local)->item.chave);
   // printf("//////////////////////\n");
-  
-  // inOrdem(arv, imprimir);
 
   disposeArvore(arv);
   return 0;
