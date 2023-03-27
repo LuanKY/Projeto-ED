@@ -26,28 +26,6 @@ bool vazia(HEAP *arvore) {
 }
 
 
-/* Verifica se a arvore possui filho a esquerda e a direita */
-bool arvoreCompleta(HEAP *arvore) {
-  if (vazia(arvore))
-    return false;
-  if (!vazia(arvore->esq) && !vazia(arvore->dir)) {
-    return true;
-  } else
-    return false;
-}
-
-
-/* Verifica se a arvore possui filho a esquerda */
-bool arvoreQuaseCompleta(HEAP *arvore) {
-  if (vazia(arvore))
-    return false;
-  if (!vazia(arvore->esq)) {
-    return true;
-  } else
-    return false;
-}
-
-
 // Cria um novo no usando o apontador arvore passado contendo o item,
 // os apontadores para o pai e para os filhos contendo NULL
 void criarNo(ITEM item, HEAP **arvore) {
@@ -62,7 +40,6 @@ void criarNo(ITEM item, HEAP **arvore) {
   (*arvore)->pai = NULL;
   (*arvore)->esq = NULL;
   (*arvore)->dir = NULL;
-
 }
 
 
@@ -102,6 +79,36 @@ void deslocar(DIRECAO direcao, HEAP **arvore) {
 
   if (direcao == NoDireito)
     *arvore = (*arvore)->dir;
+}
+
+
+/* Verifica se a arvore possui filho a esquerda e a direita */
+bool arvoreCompleta(HEAP *arvore) {
+  if (vazia(arvore))
+    return false;
+  if (!vazia(arvore->esq) && !vazia(arvore->dir)) {
+    return true;
+  } else
+    return false;
+}
+
+
+/* Verifica se a arvore possui filho a esquerda */
+bool arvoreQuaseCompleta(HEAP *arvore) {
+  if (vazia(arvore))
+    return false;
+  if (!vazia(arvore->esq) && vazia(arvore->dir)) {
+    return true;
+  } else
+    return false;
+}
+
+/* Verifica se a arvore possui nao possui filhos */
+bool arvoreImcompleta(HEAP *arvore) {
+  if (!existeNo(NoEsquerdo, arvore) && !existeNo(NoDireito, arvore))
+    return true;
+  else
+    return false;
 }
 
 
@@ -156,20 +163,17 @@ void imprimir(HEAP *arvore) {
    que fará com que a arvore heap continue sendo completa ou quase completa, 
    apos isso, local recebe a posição de insercao */
 void encontraPos(HEAP *arvore, HEAP **local) {
-*local = arvore; 
-
   if (!vazia(arvore)) {
-    if (arvoreCompleta(arvore)) { // Possui dois filhos então entao deve procurar em suas sub-arvores
+    if(arvoreImcompleta(arvore) && (local == NULL)) { // O local de insercao e o filho esquerdo do NO
+      *local = arvore; 
+      return;
+    } else if (arvoreQuaseCompleta(arvore)) { // O local de insercao e o filho direito do NO
+      *local = arvore; 
+      return;
+    } else if (arvoreCompleta(arvore)) { // Possui dois filhos então entao deve procurar em suas sub-arvores
       encontraPos(arvore->esq, local);
-
       encontraPos(arvore->dir, local);
     }
-    if (arvoreQuaseCompleta(arvore)) { // Possui um filho então então a posicao e o filho direito da arvore
-      *local = arvore->dir; 
-      return;
-    }
-    *local = arvore->esq; // Como nao possui filhos então então a posicao e o filho esquerdo da arvore
-    return;
   }
   return;
 }
@@ -206,11 +210,11 @@ int main() {
           9       6
         8   7  5            
   */
-  // encontraPos(arv, &local);
-  // printf("(%d)", local->item.chave);
+  encontraPos(arv, &local);
+  printf("(%d)", local->item.chave);
   // printf("//////////////////////\n");
   
-  inOrdem(arv, imprimir);
+  // inOrdem(arv, imprimir);
 
   disposeArvore(arv);
   return 0;
