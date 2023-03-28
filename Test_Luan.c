@@ -159,15 +159,48 @@ void imprimir(HEAP *arvore) {
 }
 
 
+/*
+| Objetivos: Retorna true se a chave for encontrada. Neste caso, p
+|            aponta para o No. Se a chave nao for encontrada, retorna false
+|            e p aponta para o No que seria o seu pai (caso existisse).
+*/
+bool encontrarChave(TIPOCHAVE chave, HEAP **p, HEAP *arvore) {
+  HEAP *pAnt = NULL;
+  bool achou = false;
+  *p = arvore;
+
+  // Laco que fara o deslocamento de p ate que tenha chegado ao local onde
+  // deveria estar o No ou tenha o encontrado
+  while (!vazia(*p) && !achou) {
+    pAnt = *p;
+    if (chave == (*p)->item.chave)
+      achou = true;
+    else {
+      if (chave < (*p)->item.chave)
+        deslocar(NoEsquerdo, p);
+      else
+        deslocar(NoDireito, p);
+    }
+  }
+
+  // Testa se nao achou a chave na arvore, pois nesse caso p devera estar
+  //  apontando para o No que seria seu pai, ou seja, pAnt
+  if (!achou)
+    *p = pAnt;
+
+  return achou;
+}
+
+
 /* Percorre a arvore ate encontrar a posicao de insercao, que sera a posicao
    que fará com que a arvore heap continue sendo completa ou quase completa, 
    apos isso, local recebe a posição de insercao */
 void encontraPos(HEAP *arvore, HEAP **local) {
   if (!vazia(arvore)) {
-    if((arvoreImcompleta(arvore)) && (*local == NULL)) { // O local de insercao e o filho esquerdo do NO
+    if((arvoreImcompleta(arvore)) && (*local == NULL)) { // O local de insercao e o filho esquerdo do NO mais a esquerda
       *local = arvore; 
       return;
-    } else if ((arvoreImcompleta(arvore)) && (!arvoreQuaseCompleta(*local)) && (arvore->nivel < (*local)->nivel)) {
+    } else if ((arvoreImcompleta(arvore)) && (!arvoreQuaseCompleta(*local)) && (arvore->nivel < (*local)->nivel)) { // O local de insercao e o filho esquerdo do NO com nivel mais baixo
       *local = arvore; 
       return;
     } else if (arvoreQuaseCompleta(arvore)) { // O local de insercao e o filho direito do NO
@@ -182,34 +215,72 @@ void encontraPos(HEAP *arvore, HEAP **local) {
 }
 
 
+/* Insere o item passado no local de insercao correto, que e obtido atraves da funcao encontraPos */
+void inserir(ITEM item, HEAP **arvore) {
+  HEAP *local = NULL;
+  encontraPos(*arvore, &local);
+  if (vazia(*arvore)) {
+    criarNo(item, arvore);
+  } else if (arvoreImcompleta(local)) {
+    adicionarFilho(item, NoEsquerdo, local);
+  } else if (arvoreQuaseCompleta(local)) {
+    adicionarFilho(item, NoDireito, local);
+  }
+
+  // Chama a funcao de reorganizar a arvore a partir da que foi inserida até chegar no NO Raiz
+}
+
+/*
+  Objetivos: Procura um No que contenha uma chave igual a passada. Caso
+             encontre, copia item sobre o item do No e retorna true. Se
+             nao encontrar, retorna false
+*/
+void alterar(ITEM itemAnt, ITEM itemAtual, HEAP *arvore) {
+  HEAP *p;
+  if (encontrarChave(itemAnt.chave, &p, arvore)) {
+    printf("//////////////////////\n");
+    p->item = itemAtual;
+  }
+}
+
+
+
 /////////////////////////////////////////////////////
 
 int main() {
   HEAP *arv = NULL;
-  HEAP *local = NULL;
-  ITEM item;
+  ITEM item, item2;
 
   item.chave = 10;
-  criarNo(item, &arv);
+  inserir(item, &arv);
   item.chave = 9;
-  adicionarFilho(item, NoEsquerdo, arv);
+  inserir(item, &arv);
   item.chave = 8;
-  adicionarFilho(item, NoEsquerdo, arv->esq);
+  inserir(item, &arv);
   item.chave = 7;
-  adicionarFilho(item, NoDireito, arv->esq);
+  inserir(item, &arv);
   item.chave = 6;
-  adicionarFilho(item, NoDireito, arv);
+  inserir(item, &arv);
+  item.chave = 5;
+  inserir(item, &arv);
+
+
+  item2.chave = 25;
+  alterar(item, item2, arv);
+
   
 
   /*          10
-          9       6
-        8   7              
+          9       8
+        7  6    5          
   */
-  encontraPos(arv, &local);
-  printf("(%d)", local->item.chave);
+
+  // inserir(item, &arv);
+  // encontraPos(arv, &local);
+  // printf("(%d)", local->item.chave);
   // printf("//////////////////////\n");
   
-  // inOrdem(arv, imprimir);
+  inOrdem(arv, imprimir);
 
   disposeArvore(arv);
   return 0;
