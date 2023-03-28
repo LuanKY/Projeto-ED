@@ -164,7 +164,10 @@ void imprimir(HEAP *arvore) {
    apos isso, local recebe a posição de insercao */
 void encontraPos(HEAP *arvore, HEAP **local) {
   if (!vazia(arvore)) {
-    if(arvoreImcompleta(arvore) && (local == NULL)) { // O local de insercao e o filho esquerdo do NO
+    if((arvoreImcompleta(arvore)) && (*local == NULL)) { // O local de insercao e o filho esquerdo do NO
+      *local = arvore; 
+      return;
+    } else if ((arvoreImcompleta(arvore)) && (!arvoreQuaseCompleta(*local)) && (arvore->nivel < (*local)->nivel)) {
       *local = arvore; 
       return;
     } else if (arvoreQuaseCompleta(arvore)) { // O local de insercao e o filho direito do NO
@@ -177,12 +180,6 @@ void encontraPos(HEAP *arvore, HEAP **local) {
   }
   return;
 }
-
-/* Teste da pos de insercao
-ITEM item;
-item.chave = 11;
-local->item.chave = item.chave;
-printf("(%d)", local->item.chave);*/
 
 
 /////////////////////////////////////////////////////
@@ -202,13 +199,11 @@ int main() {
   adicionarFilho(item, NoDireito, arv->esq);
   item.chave = 6;
   adicionarFilho(item, NoDireito, arv);
-  item.chave = 5;
-  adicionarFilho(item, NoEsquerdo, arv->dir);
   
 
   /*          10
           9       6
-        8   7  5            
+        8   7              
   */
   encontraPos(arv, &local);
   printf("(%d)", local->item.chave);
