@@ -22,7 +22,7 @@ bool cheia(ArvHeap *heap){
     return heap->tamanho == MAX;
 }
 /*
-    Serve para ajustar os ponteiros pÛs inserÁ„o ou pos remoÁ„o
+    Serve para ajustar os ponteiros p√≥s inser√ß√£o ou pos remo√ß√£o
 */
 void ajuste(int *a, int *b) {
     int aux = *a;
@@ -39,8 +39,8 @@ void inserir(ArvHeap *heap, int chave) {
     int i = heap->tamanho; // i representa o indice
     heap->tamanho++;
 
-    while (i > 0 && heap->item[i] > heap->item[(i - 1) / 2]){ // (i - 1) / 2 representa o indice do nÛ pai da arvore em quest„o
-                                                             // o Loop sÛ para quando o indice for > 0 ou quando o valor a ser inserido for menor que o pai
+    while (i > 0 && heap->item[i] > heap->item[(i - 1) / 2]){ // (i - 1) / 2 representa o indice do n√≥ pai da arvore em quest√£o
+                                                             // o Loop s√≥ para quando o indice for > 0 ou quando o valor a ser inserido for menor que o pai
         ajuste(&heap->item[i], &heap->item[(i - 1) / 2]);
 
         i = (i - 1) / 2;
@@ -53,17 +53,17 @@ int RemoveMax(ArvHeap *heap) {
 
     int max = heap->item[0]; // Sempre vai excluir o indice 0 que representa a raiz, em arvore heap as remocoes acontecem sempre na raiz
     heap->tamanho--;         // seja a arvore min heap ou max heap
-    heap->item[0] = heap->item[heap->tamanho]; // o nÛ raiz passa a ser o indice
+    heap->item[0] = heap->item[heap->tamanho]; // o n√≥ raiz passa a ser o indice
 
     int i = 0;
     while (i < heap->tamanho) {
-        int NoEsq = i * 2 + 1; // indica o indice do nÛ esquerdo do pai, sendo i o indice do pai se o pai for tiver o indice 0 ent„o
+        int NoEsq = i * 2 + 1; // indica o indice do n√≥ esquerdo do pai, sendo i o indice do pai se o pai for tiver o indice 0 ent√£o
                                // 0 * 2 + 1 = 1 na arvore o filho esquerdo tem o indice 1
 
 
-        int NoDir = i * 2 + 2; // indica o indice do nÛ direto do pai, sendo i o indice do pai se o pai for tiver o indice 0 ent„o
+        int NoDir = i * 2 + 2; // indica o indice do n√≥ direto do pai, sendo i o indice do pai se o pai for tiver o indice 0 ent√£o
                                // 0 * 2 + 2 = 2 na arvore o filho direito tem o indice 2
-        int NoPai = NULL;
+        int NoPai = -1;
 
         if (NoEsq < heap->tamanho) {
             NoPai = NoEsq;
@@ -79,7 +79,7 @@ int RemoveMax(ArvHeap *heap) {
         }
     }
 
-    printf(" No Removido %d\n", max);
+    printf("No Removido %d\n", max);
 }
 /*
     Printa a arvore
@@ -89,7 +89,8 @@ void MostrarArv(ArvHeap *heap) {
     for (int i = 0; i < heap->tamanho; i++) {
         printf("%d ", heap->item[i]);
     }
-    printf("\n");
+  printf("\nTamanho: %d\n", heap->tamanho);
+  printf("\n");
 }
 
 int main() {
@@ -105,12 +106,10 @@ int main() {
     inserir(&heap, 0);
     inserir(&heap, 43);
     inserir(&heap, 100);
-
     MostrarArv(&heap);
 
 
     int HeapMax = RemoveMax(&heap);
-
 
     MostrarArv(&heap);
 
