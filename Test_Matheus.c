@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_HEAP_SIZE 100
+#define raiz_HEAP_SIZE 100
 
-int heap[MAX_HEAP_SIZE];
-int heapSize = 0;
+int heap[raiz_HEAP_SIZE];
+int tamanho = 0;
 
 // Função auxiliar para trocar dois elementos em um array
-void swap(int *a, int *b) {
+void troca(int *a, int *b) {
     int temp = *a;
     *a = *b;
     *b = temp;
@@ -15,48 +15,48 @@ void swap(int *a, int *b) {
 
 // Função para inserir um elemento na Heap
 void insert(int value) {
-    if (heapSize >= MAX_HEAP_SIZE) {
+    if (tamanho >= raiz_HEAP_SIZE) {
         printf("Erro: Heap cheia!\n");
         return;
     }
-    heap[heapSize] = value;
-    int current = heapSize;
-    while (heap[current] > heap[(current-1)/2]) {
-        swap(&heap[current], &heap[(current-1)/2]);
-        current = (current-1)/2;
+    heap[tamanho] = value;
+    int atual = tamanho;
+    while (heap[atual] > heap[(atual-1)/2]) {
+        troca(&heap[atual], &heap[(atual-1)/2]);
+        atual = (atual-1)/2;
     }
-    heapSize++;
+    tamanho++;
 }
 
 // Função para remover o elemento de maior valor da Heap
-int removeMax() {
-    if (heapSize == 0) {
+int remover() {
+    if (tamanho == 0) {
         printf("Erro: Heap vazia!\n");
         return -1;
     }
-    int max = heap[0];
-    heap[0] = heap[heapSize-1];
-    heapSize--;
-    int current = 0;
-    while (current*2+1 < heapSize) {
-        int child = current*2+1;
-        if (child+1 < heapSize && heap[child+1] > heap[child]) {
-            child++;
+    int raiz = heap[0];
+    heap[0] = heap[tamanho-1];
+    tamanho--;
+    int atual = 0;
+    while (atual*2+1 < tamanho) {
+        int filho = atual*2+1;
+        if (filho+1 < tamanho && heap[filho+1] > heap[filho]) {
+            filho++;
         }
-        if (heap[current] < heap[child]) {
-            swap(&heap[current], &heap[child]);
-            current = child;
+        if (heap[atual] < heap[filho]) {
+            troca(&heap[atual], &heap[filho]);
+            atual = filho;
         } else {
             break;
         }
     }
-    return max;
+    return raiz;
 }
 
 // Função para imprimir a Heap
 void printHeap() {
     printf("Heap: ");
-    for (int i = 0; i < heapSize; i++) {
+    for (int i = 0; i < tamanho; i++) {
         printf("%d ", heap[i]);
     }
     printf("\n");
@@ -69,11 +69,11 @@ int main() {
     insert(8);
     insert(15);
     printHeap();
-    int max = removeMax();
-    printf("Elemento removido: %d\n", max);
+    int raiz = remover();
+    printf("Elemento removido: %d\n", raiz);
     printHeap();
-    max = removeMax();
-    printf("Elemento removido: %d\n", max);
+    raiz = remover();
+    printf("Elemento removido: %d\n", raiz);
     printHeap();
     insert(25);
     printHeap();
