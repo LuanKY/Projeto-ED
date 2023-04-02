@@ -1,155 +1,81 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
 
-typedef int TIPOCHAVE;
+#define MAX_HEAP_SIZE 100
 
-typedef enum {NoEsquerdo, NoDireito, NoPai, NoRaiz} DIRECAO;
+int heap[MAX_HEAP_SIZE];
+int heapSize = 0;
 
-typedef struct {
-    TIPOCHAVE chave;
-//    char valor[100];
-} ITEM;
-
-typedef struct estrutura
-{
-    ITEM item;
-    struct estrutura *esq;
-    struct estrutura *dir;
-    struct estrutura *pai;
-} HEAP;
-
-// Inicializa a arvore binaria deixando-a pronta para ser utilizada.
-void inicializar(HEAP *arvore)
-{
-    arvore = NULL;
-}
-
-// Retorna true se a arvore esta vazia (igual a NULL)
-
-bool vazia(HEAP *arvore)
-{
-    return arvore == NULL;
-}
-
-// Cria um novo no usando o apontador arvore passado contendo o item,
-// os apontadores para o pai e para os filhos contendo NULL
-void criarNo(ITEM item, HEAP **arvore) {
-  if (!vazia(*arvore)) {
-    printf("ERRO: O no deve estar vazio para ser criado.");
-    exit(EXIT_FAILURE);
-  }
-
-  *arvore = (HEAP*) malloc(sizeof(HEAP));
-  (*arvore)->item = item;
-  (*arvore)->pai = NULL;
-  (*arvore)->esq = NULL;
-  (*arvore)->dir = NULL;
-}
-
-// Testa se o No indicado por Direcao a partir de arv existe
-bool existeNo(DIRECAO direcao, HEAP *arvore)
-{
-   if (vazia(arvore))
-      return false;
-
-   if (direcao == NoRaiz)
-      return true;
-   
-   if (direcao == NoPai)
-      return !vazia(arvore->pai);
-
-   if (direcao == NoEsquerdo)
-      return !vazia(arvore->esq);
-
-   if (direcao == NoDireito)
-      return !vazia(arvore->dir);
-
-   return false;
-}
-
-// Deslocar o apontador Arvore para o No indicado por Direcao
-void deslocar(DIRECAO direcao, HEAP **arvore) {
-  if (direcao == NoRaiz) {
-    while (existeNo(NoPai, *arvore)) {
-      *arvore = (*arvore)->pai;
-    }
-  }
-  if (direcao == NoPai)
-    *arvore = (*arvore)->pai;
-
-  if (direcao == NoEsquerdo)
-    *arvore = (*arvore)->esq;
-
-  if (direcao == NoDireito)
-    *arvore = (*arvore)->dir;
-}
-
-// Visita um NO da arvore, imprimindo o valor da chave
-// entre parenteses
-void visite(HEAP *arvore) {
-    printf("(%d)", arvore->item.chave);
-}
-
-/* HEAP* encontraPos(HEAP *arvore){
-   if(!existeNo(NoEsquerdo,arvore)){
-      return arvore->esq;
-   }
-   else{
-      if(!existeNo(NoDireito,arvore)){
-         return arvore->dir;
-      }
-      else {
-         return encontraPos(arvore->esq) && encontraPos(arvore->dir);
-      }
-   }
-} */
-void swap(ITEM *a, ITEM *b) {
-    ITEM temp = *a;
+// Função auxiliar para trocar dois elementos em um array
+void swap(int *a, int *b) {
+    int temp = *a;
     *a = *b;
     *b = temp;
 }
 
-bool inserir(ITEM item, HEAP *arvore){
-   if(vazia(arvore)){
-      criarNo(item,arvore);
-   }
-   HEAP *pAtual = arvore;
-   while(1){
-      if(pAtual->esq == NULL){
-         pAtual->esq = arvore;
-         arvore->pai = pAtual;
-         break;
-      }
-      else if(pAtual->dir == NULL){
-         pAtual->dir = arvore;
-         arvore->pai = pAtual;
-         break;
-      }
-      else {
-         if(pAtual->esq->esq == NULL || pAtual ->esq->dir == NULL){
-            pAtual = pAtual->esq;
-         } else pAtual = pAtual->dir;
-      }
-   }
-   while(arvore->pai != NULL && arvore->item.chave > arvore->pai->item.chave) {
-      swap(&arvore->item, &arvore->pai->item);
-      arvore = arvore->pai;
-   }
+// Função para inserir um elemento na Heap
+void insert(int value) {
+    if (heapSize >= MAX_HEAP_SIZE) {
+        printf("Erro: Heap cheia!\n");
+        return;
+    }
+    heap[heapSize] = value;
+    int current = heapSize;
+    while (heap[current] > heap[(current-1)/2]) {
+        swap(&heap[current], &heap[(current-1)/2]);
+        current = (current-1)/2;
+    }
+    heapSize++;
 }
 
-/* void heapify(HEAP *arvore){
-   if(arvore->item.chave < arvore->esq->item.chave){
-      HEAP *aux = arvore->esq;
-      if(aux->esq == NULL && aux->dir == NULL){
-         aux->pai = arvore->pai;
-         arvore->pai = aux;
-         arvore->esq == NULL;
-         aux->dir = arvore->dir;
-         arvore->dir = NULL;
-         aux->dir->pai = aux;
-      }
-   }
-} */
+// Função para remover o elemento de maior valor da Heap
+int removeMax() {
+    if (heapSize == 0) {
+        printf("Erro: Heap vazia!\n");
+        return -1;
+    }
+    int max = heap[0];
+    heap[0] = heap[heapSize-1];
+    heapSize--;
+    int current = 0;
+    while (current*2+1 < heapSize) {
+        int child = current*2+1;
+        if (child+1 < heapSize && heap[child+1] > heap[child]) {
+            child++;
+        }
+        if (heap[current] < heap[child]) {
+            swap(&heap[current], &heap[child]);
+            current = child;
+        } else {
+            break;
+        }
+    }
+    return max;
+}
 
+// Função para imprimir a Heap
+void printHeap() {
+    printf("Heap: ");
+    for (int i = 0; i < heapSize; i++) {
+        printf("%d ", heap[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    insert(10);
+    insert(5);
+    insert(20);
+    insert(8);
+    insert(15);
+    printHeap();
+    int max = removeMax();
+    printf("Elemento removido: %d\n", max);
+    printHeap();
+    max = removeMax();
+    printf("Elemento removido: %d\n", max);
+    printHeap();
+    insert(25);
+    printHeap();
+    return 0;
+}
