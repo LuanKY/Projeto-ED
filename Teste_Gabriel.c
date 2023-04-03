@@ -1,20 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_HEAP_SIZE 100
+#define MAX 100
 
 typedef struct {
     int* itens;
     int tamanho;
 } Heap;
 
-void ajuste(int* a, int* b) {
+void ajuste(int* a, int* b) { // troca de ponteiros para andar a pela arvore
     int aux = *a;
     *a = *b;
     *b = aux;
 }
 
-void HeapifyIns(Heap* heap, int i) { // i = indice
+void HeapifyIns(Heap* heap, int i) { // i = indice  Função: Reajustar os elementos da arvore para manter as propriedades pós inserção
     int pai = (i - 1) / 2; // operação para encontrar o indice do pai do nó inserido
     while (i > 0 && heap->itens[i] > heap->itens[pai]) { // Enquanto o item inserido for que o pai ele vai subindo a arvore com os ajustes
         ajuste(&heap->itens[i], &heap->itens[pai]); // troca o indice do item com o pai
@@ -24,28 +24,28 @@ void HeapifyIns(Heap* heap, int i) { // i = indice
     }
 }
 
-void HeapifyDel(Heap* heap, int i) { // i = indice
+void HeapifyDel(Heap* heap, int i) { // i = indice  Função: Ajusta os elementos para que as propridades sejam aceitas pós remoção
     int esq = 2 * i + 1; // Operação para descobrir o indice do filho esquerdo
     int dir = 2 * i + 2;// Operação para descobrir o indice do filho direito
     int maior = i;
-    if (esq < heap->tamanho && heap->itens[esq] > heap->itens[maior]) {
+    if (esq < heap->tamanho && heap->itens[esq] > heap->itens[maior]) { // compara se o elemento esquerdo é maior que o seu indice  superior
         maior = esq;}
     if (dir < heap->tamanho && heap->itens[dir] > heap->itens[maior]) {
-        maior = dir;}
-    if (maior != i) {
+        maior = dir;}// compara se o elemento direito é maior que o seu indice  superior
+    if (maior != i) { // Se houve alguma alteração o item é ajustado com o seu superior
         ajuste(&heap->itens[i], &heap->itens[maior]);
         HeapifyDel(heap, maior);}
 }
 
 Heap* inicializar() {
     Heap* heap = malloc(sizeof(Heap));
-    heap->itens = malloc(MAX_HEAP_SIZE * sizeof(int));
+    heap->itens = malloc(MAX * sizeof(int));
     heap->tamanho = 0;
     return heap;
 }
 
 void inserir(Heap* heap, int chave) {
-    if (heap->tamanho == MAX_HEAP_SIZE) {
+    if (heap->tamanho == MAX) {
         printf("Arvore Cheia!\n");
         return;
     }
