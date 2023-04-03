@@ -1,117 +1,107 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
 
-#define MAX 100
+#define MAX_HEAP_SIZE 100
 
 typedef struct {
-    int item[MAX];
+    int* itens;
     int tamanho;
-} ArvHeap;
+} Heap;
 
-void inicializar(ArvHeap *heap) {
-    heap->tamanho = 0;
-}
-
-bool vazia(ArvHeap *heap){
-    return heap == NULL;
-}
-
-bool cheia(ArvHeap *heap){
-    return heap->tamanho == MAX;
-}
-/*
-    Serve para ajustar os ponteiros pós inserção ou pos remoção
-*/
-void ajuste(int *a, int *b) {
+void ajuste(int* a, int* b) {
     int aux = *a;
     *a = *b;
     *b = aux;
 }
 
-void inserir(ArvHeap *heap, int chave) {
-    if (cheia(heap)) {
-        return false;
-    }
+void HeapifyIns(Heap* heap, int i) { // i = indice
+    int pai = (i - 1) / 2; // operação para encontrar o indice do pai do nó inserido
+    while (i > 0 && heap->itens[i] > heap->itens[pai]) { // Enquanto o item inserido for que o pai ele vai subindo a arvore com os ajustes
+        ajuste(&heap->itens[i], &heap->itens[pai]); // troca o indice do item com o pai
+        i = pai;
+        pai = (i - 1) / 2; // novo pai do elemento pós troca
 
-    heap->item[heap->tamanho] = chave;
-    int i = heap->tamanho; // i representa o indice
-    heap->tamanho++;
-
-    while (i > 0 && heap->item[i] > heap->item[(i - 1) / 2]){ // (i - 1) / 2 representa o indice do nó pai da arvore em questão
-                                                             // o Loop só para quando o indice for > 0 ou quando o valor a ser inserido for menor que o pai
-        ajuste(&heap->item[i], &heap->item[(i - 1) / 2]);
-
-        i = (i - 1) / 2;
     }
 }
 
-int RemoveMax(ArvHeap *heap) {
-    if (vazia(heap)) {
-        return;}
+void HeapifyDel(Heap* heap, int i) { // i = indice
+    int esq = 2 * i + 1; // Operação para descobrir o indice do filho esquerdo
+    int dir = 2 * i + 2;// Operação para descobrir o indice do filho direito
+    int maior = i;
+    if (esq < heap->tamanho && heap->itens[esq] > heap->itens[maior]) {
+        maior = esq;}
+    if (dir < heap->tamanho && heap->itens[dir] > heap->itens[maior]) {
+        maior = dir;}
+    if (maior != i) {
+        ajuste(&heap->itens[i], &heap->itens[maior]);
+        HeapifyDel(heap, maior);}
+}
 
-    int max = heap->item[0]; // Sempre vai excluir o indice 0 que representa a raiz, em arvore heap as remocoes acontecem sempre na raiz
-    heap->tamanho--;         // seja a arvore min heap ou max heap
-    heap->item[0] = heap->item[heap->tamanho]; // o nó raiz passa a ser o indice
+Heap* inicializar() {
+    Heap* heap = malloc(sizeof(Heap));
+    heap->itens = malloc(MAX_HEAP_SIZE * sizeof(int));
+    heap->tamanho = 0;
+    return heap;
+}
 
-    int i = 0;
-    while (i < heap->tamanho) {
-        int NoEsq = i * 2 + 1; // indica o indice do nó esquerdo do pai, sendo i o indice do pai se o pai for tiver o indice 0 então
-                               // 0 * 2 + 1 = 1 na arvore o filho esquerdo tem o indice 1
-
-
-        int NoDir = i * 2 + 2; // indica o indice do nó direto do pai, sendo i o indice do pai se o pai for tiver o indice 0 então
-                               // 0 * 2 + 2 = 2 na arvore o filho direito tem o indice 2
-        int NoPai = -1;
-
-        if (NoEsq < heap->tamanho) {
-            NoPai = NoEsq;
-        }
-        if (NoDir < heap->tamanho && heap->item[NoDir] > heap->item[NoEsq]) {
-            NoPai = NoDir;
-        }
-        if (heap->item[NoPai] > heap->item[i]) {
-            ajuste(&heap->item[NoPai], &heap->item[i]);
-            i = NoPai;
-        } else {
-            break;
-        }
+void inserir(Heap* heap, int chave) {
+    if (heap->tamanho == MAX_HEAP_SIZE) {
+        printf("Arvore Cheia!\n");
+        return;
+    }
+    else{
+        heap->itens[heap->tamanho++] = chave;
+        printf("Inserido: %d\n", chave);
+        HeapifyIns(heap, heap->tamanho - 1);
     }
 
-    printf("No Removido %d\n", max);
 }
-/*
-    Printa a arvore
-*/
-void MostrarArv(ArvHeap *heap) {
-    printf("Max Heap: ");
+
+int DeletaMax(Heap* heap) {
+    if (heap->tamanho == 0) {
+        printf("Arvore Vazia!\n");
+        return -1;
+    }
+    int max = heap->itens[0];
+    heap->itens[0] = heap->itens[--heap->tamanho];
+    HeapifyDel(heap, 0);
+    printf("Deletado: %d\n", max);
+    return max;
+}
+
+void AmostraArvore(Heap* heap) {
+    printf("Heap: ");
     for (int i = 0; i < heap->tamanho; i++) {
-        printf("%d ", heap->item[i]);
+        printf("%d ", heap->itens[i]);
     }
-  printf("\nTamanho: %d\n", heap->tamanho);
-  printf("\n");
+    printf("\n");
+    printf("Tamanho: %d\n", heap->tamanho);
 }
+
+void AmostraMax(Heap *heap){
+    if(heap->tamanho == 0){
+        printf("Arvore Vazia!");}
+    else{
+        printf("Max: %d\n", heap->itens[0]);}
+    }
 
 int main() {
-    ArvHeap heap;
-    inicializar(&heap);
+    Heap* heap = inicializar();
 
-    inserir(&heap, 88);
-    inserir(&heap, 87);
-    inserir(&heap, 73);
-    inserir(&heap, 47);
-    inserir(&heap, 54);
-    inserir(&heap, 6);
-    inserir(&heap, 0);
-    inserir(&heap, 43);
-    inserir(&heap, 100);
-    MostrarArv(&heap);
+    inserir(heap, 10);
+    inserir(heap, 20);
+    inserir(heap, 15);
+    inserir(heap, 30);
+    inserir(heap, 40);
+    AmostraMax(heap);
+    inserir(heap, 5);
+    AmostraArvore(heap);
+    int max = DeletaMax(heap);
+    AmostraMax(heap);
+    AmostraArvore(heap);
 
-
-    int HeapMax = RemoveMax(&heap);
-
-    MostrarArv(&heap);
+    free(heap->itens);
+    free(heap);
 
     return 0;
 }
