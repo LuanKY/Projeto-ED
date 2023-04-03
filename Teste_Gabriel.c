@@ -16,7 +16,7 @@ void ajuste(int* a, int* b) { // troca de ponteiros para andar a pela arvore
 
 void HeapifyIns(Heap* heap, int i) { // i = indice  Função: Reajustar os elementos da arvore para manter as propriedades pós inserção
     int pai = (i - 1) / 2; // operação para encontrar o indice do pai do nó inserido
-    while (i > 0 && heap->itens[i] > heap->itens[pai]) { // Enquanto o item inserido for que o pai ele vai subindo a arvore com os ajustes
+    while (i > 0 && heap->itens[i] > heap->itens[pai]) { // Enquanto o item inserido for maior que o pai ele  sobe a arvore com os ajustes
         ajuste(&heap->itens[i], &heap->itens[pai]); // troca o indice do item com o pai
         i = pai;
         pai = (i - 1) / 2; // novo pai do elemento pós troca
