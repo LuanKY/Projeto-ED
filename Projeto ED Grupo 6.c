@@ -39,12 +39,12 @@ void ajuste(int *a, int *b) {
 }
 
 
-void HeapifyIns(Heap* heap, int i) { // i = indice  Função: Reajustar os elementos da arvore para manter as propriedades pós inserção
-    int pai = (i - 1) / 2; // operação para encontrar o indice do pai do nó inserido
+void HeapifyIns(Heap* heap, int i) { // i = indice  FunÃ§Ã£o: Reajustar os elementos da arvore para manter as propriedades pÃ³s inserÃ§Ã£o
+    int pai = (i - 1) / 2; // operaÃ§Ã£o para encontrar o indice do pai do nÃ³ inserido
     while (i > 0 && heap->itens[i] > heap->itens[pai]) { // Enquanto o item inserido for maior que o pai ele  sobe a arvore com os ajustes
         ajuste(&heap->itens[i], &heap->itens[pai]); // troca o indice do item com o pai
         i = pai;
-        pai = (i - 1) / 2; // novo pai do elemento pós troca
+        pai = (i - 1) / 2; // novo pai do elemento pÃ³s troca
 
     }
 }
@@ -54,15 +54,15 @@ void heapifyInsM(MinHeap *heap, int i) {
         i = (i - 1) / 2;}}
 
 
-void HeapifyDel(Heap* heap, int i) { // i = indice  Função: Ajusta os elementos para que as propridades sejam aceitas pós remoção
-    int esq = 2 * i + 1; // Operação para descobrir o indice do filho esquerdo
-    int dir = 2 * i + 2;// Operação para descobrir o indice do filho direito
+void HeapifyDel(Heap* heap, int i) { // i = indice  FunÃ§Ã£o: Ajusta os elementos para que as propridades sejam aceitas pÃ³s remoÃ§Ã£o
+    int esq = 2 * i + 1; // OperaÃ§Ã£o para descobrir o indice do filho esquerdo
+    int dir = 2 * i + 2;// OperaÃ§Ã£o para descobrir o indice do filho direito
     int maior = i;
-    if (esq < heap->tamanho && heap->itens[esq] > heap->itens[maior]) { // compara se o elemento esquerdo é maior que o seu indice  superior
+    if (esq < heap->tamanho && heap->itens[esq] > heap->itens[maior]) { // compara se o elemento esquerdo Ã© maior que o seu indice  superior
         maior = esq;}
     if (dir < heap->tamanho && heap->itens[dir] > heap->itens[maior]) {
-        maior = dir;}// compara se o elemento direito é maior que o seu indice  superior
-    if (maior != i) { // Se houve alguma alteração o item é ajustado com o seu superior
+        maior = dir;}// compara se o elemento direito Ã© maior que o seu indice  superior
+    if (maior != i) { // Se houve alguma alteraÃ§Ã£o o item Ã© ajustado com o seu superior
         ajuste(&heap->itens[i], &heap->itens[maior]);
         HeapifyDel(heap, maior);}
 }
