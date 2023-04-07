@@ -6,7 +6,6 @@
 typedef struct {
     int *itens;
     int tamanho;
-    int capacity;
 } MinHeap;
 
 MinHeap* inicializar() {
