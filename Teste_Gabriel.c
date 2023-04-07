@@ -85,6 +85,14 @@ void AmostraMax(Heap *heap){
         printf("Max: %d\n", heap->itens[0]);}
     }
 
+void Cauda(Heap *heap){
+    if(heap->tamanho == 0){
+        printf("Arvore Vazia!");}
+    else{
+        printf("Cauda: %d\n", heap->itens[heap->tamanho-1]);}
+    }
+
+
 int main() {
     Heap* heap = inicializar();
 
@@ -93,9 +101,10 @@ int main() {
     inserir(heap, 15);
     inserir(heap, 30);
     inserir(heap, 40);
-    AmostraMax(heap);
-    inserir(heap, 5);
     AmostraArvore(heap);
+    AmostraMax(heap);
+    Cauda(heap);
+    inserir(heap, 5);
     int max = DeletaMax(heap);
     AmostraMax(heap);
     AmostraArvore(heap);
