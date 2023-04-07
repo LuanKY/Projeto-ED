@@ -78,6 +78,12 @@ void AmostraMin(MinHeap *heap){
     else{
         printf("Min: %d\n", heap->itens[0]);}
     }
+void Cauda(MinHeap *heap){
+    if(heap->tamanho == 0){
+        printf("Arvore Vazia!");}
+    else{
+        printf("Cauda: %d\n", heap->itens[heap->tamanho - 1]);}
+    }
 int main() {
     MinHeap *heap = inicializar();
 
@@ -91,7 +97,7 @@ int main() {
     AmostraMin(heap);
     inserir(heap, 5);
     AmostarArvore(heap);
-
+    Cauda(heap);
     int min = DeletaMin(heap);
 
     AmostraMin(heap);
