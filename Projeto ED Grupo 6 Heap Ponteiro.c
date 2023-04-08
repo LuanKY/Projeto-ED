@@ -577,25 +577,25 @@ int main() {
   ITEM item, item2;
 
   // Criar arvore inserindo os elementos de forma a manter sempre sendo uma arvore heap
-  printf("\Inserindo 1\n");
+  printf("Inserindo 1\n");
   item.chave = 1;
   inserirNo(item, &arv);
-  printf("\Inserindo 9\n");
+  printf("Inserindo 9\n");
   item.chave = 9;
   inserirNo(item, &arv);
-  printf("\Inserindo 18\n");
+  printf("Inserindo 18\n");
   item.chave = 18;
   inserirNo(item, &arv);
-  printf("\Inserindo 7\n");
+  printf("Inserindo 7\n");
   item.chave = 7;
   inserirNo(item, &arv);
-  printf("\Inserindo 6\n");
+  printf("Inserindo 6\n");
   item.chave = 6;
   inserirNo(item, &arv);
-  printf("\Inserindo 5\n");
+  printf("Inserindo 5\n");
   item.chave = 5;
   inserirNo(item, &arv);
-  printf("\Inserindo 2\n");
+  printf("Inserindo 2\n");
   item.chave = 2;
   inserirNo(item, &arv);
 
