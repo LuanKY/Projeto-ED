@@ -114,6 +114,49 @@ bool arvoreImcompleta(HEAP *arvore) {
 }
 
 
+/*
+| Objetivo: Percorrer a arvore, da subarvore esquerda para a subarvore,
+|           direita, apos achar o ultimo NO da arvore que possua o 
+|           nivel maximo da arvore, apos isso retorna ele
+*/
+HEAP* ultimoNo(HEAP* arvore, HEAP* ultimo) {
+  if (arvore == NULL) { // Caso a arvore seja vazia, retorna o ultimo NO visitado
+    return ultimo;
+  }
+
+  HEAP* ultimo_esq = ultimoNo(arvore->esq, arvore);
+  HEAP* ultimo_dir = ultimoNo(arvore->dir, arvore);
+
+  // Faz a comparacao entre os niveis dos ultimos NOs visitados na subarvore esquerda e na subarvore direita
+  int nivel_ultimo_esq = ultimo_esq != NULL ? ultimo_esq->nivel : -1;
+  int nivel_ultimo_dir = ultimo_dir != NULL ? ultimo_dir->nivel : -1;
+  
+  if (arvore->nivel >= nivel_ultimo_esq && arvore->nivel >= nivel_ultimo_dir) { // Verifica se o nivel do NO atual e maior ou igual aos niveis dos ultimos NOs visitados, e se for, significa que este e o ultimo NO da arvore que possui o nivel mais alto
+    return arvore;
+  } else if (nivel_ultimo_dir >= nivel_ultimo_esq) { // Verifica se o nivel do ultimo NO visitado na subarvore direita e maior ou igual ao nivel do ultimo NO visitado na subarvore esquerda, significa que ele e o ultimo NO da arvore
+    return ultimo_dir;
+  } else { // Significa que o ultimo NO visitado na subarvore esquerda e o ultimo NO da arvore
+    return ultimo_esq;
+  }
+}
+
+
+/*
+| Objetivo: Percorrer a arvore pelo lado esquerdo e apos achar o
+|           NO mais inferior a esquerda, retorna ele
+*/
+HEAP* primeiroNo(HEAP* no) {
+  if (no == NULL) { // Verifica se chegou no final da arvore
+    return NULL;
+  }
+  while (no->esq != NULL) { // Percorre a arvore ate encontrar o NO mais inferior a esquerda
+    no = no->esq;
+  }
+  return no;
+}
+
+
+
 // Cria um filho no NO apontado por Arvore na direcao informada
 bool adicionarFilho(ITEM item, DIRECAO direcao, HEAP *arvore) {
   if (vazia(arvore) || (direcao == NoPai) || (direcao == NoRaiz) || existeNo(direcao, arvore))
@@ -171,8 +214,10 @@ bool encontrarChave(TIPOCHAVE chave, HEAP **noDoItem, HEAP *arvore) {
       *noDoItem = arvore;
       return true;
     }     
+
     encontrarChave(chave, noDoItem, arvore->esq);
     encontrarChave(chave, noDoItem, arvore->dir);
+
   } else {
     return false;
   }
@@ -252,6 +297,7 @@ void heapify(HEAP *no) {
       if (no->dir->dir != NULL) // Verifica se o antigo pai do NO possui filho direito, e caso possua, faz com que esse filho o aponte como pai
         no->dir->dir->pai = no->dir;
     }
+
     free(noTemp);
     heapify(no);
   }
@@ -290,6 +336,7 @@ void encontraPos(HEAP *arvore, HEAP **local) {
 void inserirNo(ITEM item, HEAP **arvore) {
   HEAP *local = NULL;
   encontraPos(*arvore, &local); // Encontra a pos de insercao
+  
   if (vazia(*arvore)) { // Se vazia, significa que e o primeiro NO da arvore
     criarNo(item, arvore);
   } else if (arvoreImcompleta(local)) { // Se incompleta, significa que sera inserido como NO esquerdo da arvore
@@ -299,7 +346,191 @@ void inserirNo(ITEM item, HEAP **arvore) {
     adicionarFilho(item, NoDireito, local);
     heapify(local->dir);
   }
+
   deslocar(NoRaiz, arvore); // Garante que a arvore sempre seja utilizada a partir de sua raiz
+}
+
+
+/*
+| Objetivo: Captura o ultimo NO da arvore, e caso ele possua pai,
+|           faz com que o seu pai aponte pra NULL pelo lado certo, 
+|           apos isso re-insere esse no na arvore
+*/
+void ajuste(HEAP **arvore) {
+  HEAP *ultimo = ultimoNo(*arvore, NULL);
+
+  if (ultimo->pai != NULL) {
+    if (ultimo->pai->esq == ultimo) // Verifica se o avo do NO aponta para ele pelo lado esquerdo, e caso aponte, faz com que esse avo aponte para seu pai pelo lado esquerdo
+      ultimo->pai->esq = NULL;
+    if (ultimo->pai->dir == ultimo) // Verifica se o avo do NO aponta para ele pelo lado direito, e caso aponte, faz com que esse avo aponte para seu pai pelo lado direito
+      ultimo->pai->dir = NULL;
+    
+    inserirNo(ultimo->item, arvore);
+    free(ultimo);
+  }
+}
+
+
+/*
+| Objetivo: Procurar um No que contenha uma chave igual a passada. Caso
+|           encontre, move ele para que se torne uma folha da arvore e
+|           depois limpa da memoria, apos isso reorganiza a arvore,
+|           para que continue matendo as propriedades de uma heap
+*/
+bool removerNo(TIPOCHAVE chave, HEAP **arvore, bool recursao) {
+  HEAP *no = NULL;
+
+  if (encontrarChave(chave, &no, *arvore)) {
+    // Cria uma copia do NO
+    HEAP *noTemp = (HEAP*) malloc(sizeof(HEAP));
+    noTemp->pai = no->pai;
+    noTemp->esq = no->esq;
+    noTemp->dir = no->dir;
+    noTemp->nivel = no->nivel;
+    noTemp->item = no->item;
+
+    // Salva o ultimo NO da arvore, aquele que substituira o NO removido
+    HEAP *ultimo = NULL;
+    ultimo = ultimoNo(*arvore, ultimo);
+
+    if ((ultimo == no) && (recursao == false)) { // Se for o NO mais a direita da arvore e nao for uma recursão, elimina o NO da arvore
+      if (no->pai != NULL) {
+        
+        if(no->pai->esq == no) {
+          no->pai->esq = NULL; // Elimina o NO da arvore
+        } else if(no->pai->dir == no) {
+          no->pai->dir = NULL;
+        }
+      }
+
+      free(no);
+      free(noTemp);
+      deslocar(NoRaiz, arvore); // Garante que a arvore sempre seja utilizada a partir de sua raiz
+      return true;
+    }
+
+    if ((no->esq == NULL) && (no->dir == NULL)) { // Se nao tiver nenhum filho, altera o pai pra NULL, limpa da memoria e realoca o novo filho dele
+      if (ultimo->nivel >= no->nivel) { // Garante que o ultimo pode ser trocado com o NO sem perder suas propriedades
+        if(no->pai->esq == no) {
+          no->pai->esq = NULL; // Elimina o NO da arvore
+
+          if(ultimo->pai->esq == ultimo) {
+            ultimo->pai->esq = NULL;
+          } else if(ultimo->pai->dir == ultimo) {
+            ultimo->pai->dir = NULL;
+          }
+
+          no->pai->esq = ultimo;
+        } else if(no->pai->dir == no) {
+          no->pai->dir = NULL; // Elimina o NO da arvore
+          ultimo = ultimoNo(*arvore, ultimo);
+          
+          if (no->pai->esq != ultimo) { // Se o ultimo nao for o filho esquerdo do pai do NO
+            if(ultimo->pai->esq == ultimo) {
+              ultimo->pai->esq = NULL;
+            } else if(ultimo->pai->dir == ultimo) {
+              ultimo->pai->dir = NULL;
+            }
+            no->pai->dir = ultimo;
+          }
+      }
+      
+      ultimo->nivel = no->nivel;
+      ultimo->pai = no->pai;
+      free(no);
+      heapify(ultimo);
+      }
+      return true;
+    }
+
+    if ((no->esq != NULL) && (no->dir == NULL)) { // Se tiver um filho e esse filho for o da esquerda
+      // Alterando o NO para oculpar a posicao do seu filho esquerdo
+      no->nivel = no->esq->nivel;
+      no->pai = no->esq;
+      no->esq = NULL;
+      no->dir = NULL;
+
+      // Alterando o filho esquerdo do NO (que agora e seu pai) para oculpar a posicao anterior do NO
+      no->pai->nivel = noTemp->nivel;
+      no->pai->pai = noTemp->pai;
+      no->pai->esq = no;
+      no->pai->dir = NULL;
+
+      if (no->pai->pai != NULL) {
+        if (no->pai->pai->esq == no) // Verifica se o avo do NO aponta para ele pelo lado esquerdo, e caso aponte, faz com que esse avo aponte para seu pai pelo lado esquerdo
+          no->pai->pai->esq = no->pai;
+        if (no->pai->pai->dir == no) // Verifica se o avo do NO aponta para ele pelo lado direito, e caso aponte, faz com que esse avo aponte para seu pai pelo lado direito
+          no->pai->pai->dir = no->pai;
+      }
+      
+      free(noTemp);
+      
+      deslocar(NoRaiz, arvore); // Garante que a arvore sempre seja utilizada a partir de sua raiz
+      if (primeiroNo(*arvore) == ultimoNo(*arvore, NULL))
+        removerNo(chave, arvore, false);
+      else
+        removerNo(chave, arvore, true);
+    }
+
+    if ((no->esq != NULL) && (no->dir != NULL)) { // Se tiver os dois filho, troca com o maior entre os filhos, e chama a funcao novamente
+      if (no->dir->item.chave >= no->esq->item.chave) {
+        // Alterando o NO para oculpar a posicao do seu filho esquerdo
+        no->nivel = no->esq->nivel;
+        no->pai = no->dir;
+        no->esq = no->dir->esq;
+        no->dir = no->dir->dir;
+
+        // Alterando o filho esquerdo do NO (que agora e seu pai) para oculpar a posicao anterior do NO
+        no->pai->nivel = noTemp->nivel;
+        no->pai->pai = noTemp->pai;
+        no->pai->esq = noTemp->esq;
+        no->pai->dir = no;
+
+        if (no->pai->pai != NULL) { // Verifica se o NO e raiz, caso nao seja faz com que esse avo aponte para seu pai pelo lado direito
+          no->pai->pai->dir = no->pai;
+        }
+
+        // Alterando seu antigo filho esquerdo para apontar para o atual pai
+        no->pai->esq->pai = no->pai;
+      } else {
+        // Alterando o NO para oculpar a posicao do seu filho esquerdo
+        no->nivel = no->esq->nivel;
+        no->pai = no->esq;
+        no->dir = no->esq->dir;
+        no->esq = no->esq->esq;
+
+        // Alterando o filho esquerdo do NO (que agora e seu pai) para oculpar a posicao anterior do NO
+        no->pai->nivel = noTemp->nivel;
+        no->pai->pai = noTemp->pai;
+        no->pai->esq = no;
+        no->pai->dir = noTemp->dir;
+
+        if (no->pai->pai != NULL) { // Verifica se o NO e raiz, caso nao seja faz com que esse avo aponte para seu pai pelo lado esquerdo
+          no->pai->pai->esq = no->pai;
+        }
+
+        // Alterando seu antigo filho esquerdo para apontar para o atual pai
+        no->pai->dir->pai = no->pai; 
+      }
+
+      if (no->esq != NULL) { // Verifica se NO tem filho esquerdo e caso tenha, faz com que esse filho aponte para ele como pai
+        no->esq->pai = no;
+      } else if (no->dir != NULL) { // Verifica se NO tem filho direito e caso tenha, faz com que esse filho aponte para ele como pai
+        no->dir->pai = no;
+      }
+
+      free(noTemp);
+
+      deslocar(NoRaiz, arvore); // Garante que a arvore sempre seja utilizada a partir de sua raiz
+      if (primeiroNo(*arvore) == ultimoNo(*arvore, NULL))
+        removerNo(chave, arvore, false);
+      else
+        removerNo(chave, arvore, true);
+    }
+  } else {
+    return true;
+  }
+  return true;
 }
 
 
@@ -310,6 +541,7 @@ void inserirNo(ITEM item, HEAP **arvore) {
 */
 bool obterItem(TIPOCHAVE chave, ITEM *item, HEAP *arvore) {
   HEAP *noDoItem = NULL;
+
   if (encontrarChave(chave, &noDoItem, arvore)) {
     *item = noDoItem->item;
     return true;
@@ -326,6 +558,7 @@ bool obterItem(TIPOCHAVE chave, ITEM *item, HEAP *arvore) {
 */
 void alterarItem(ITEM itemAnt, ITEM itemAtual, HEAP **arvore) {
   HEAP *noDoItem = NULL;
+
   if (encontrarChave(itemAnt.chave, &noDoItem, *arvore)) {
     noDoItem->item = itemAtual;
     heapify(noDoItem);
@@ -334,14 +567,7 @@ void alterarItem(ITEM itemAnt, ITEM itemAtual, HEAP **arvore) {
 }
 
 
-/*
-| Objetivo: Procurar um No que contenha uma chave igual a passada. Caso
-|           encontre, move ele para que se torne uma folha da arvore e
-|           depois limpa da memoria, apos isso reorganiza a arvore,
-|           para que continue matendo as propriedades de uma heap
-*/
-bool removerNo() {
-}
+
 
 
 /////////////////////////////////////////////////////
@@ -351,44 +577,91 @@ int main() {
   ITEM item, item2;
 
   // Criar arvore inserindo os elementos de forma a manter sempre sendo uma arvore heap
+  printf("\Inserindo 1\n");
   item.chave = 1;
   inserirNo(item, &arv);
+  printf("\Inserindo 9\n");
   item.chave = 9;
   inserirNo(item, &arv);
+  printf("\Inserindo 18\n");
   item.chave = 18;
   inserirNo(item, &arv);
+  printf("\Inserindo 7\n");
   item.chave = 7;
   inserirNo(item, &arv);
+  printf("\Inserindo 6\n");
   item.chave = 6;
   inserirNo(item, &arv);
+  printf("\Inserindo 5\n");
   item.chave = 5;
   inserirNo(item, &arv);
+  printf("\Inserindo 2\n");
   item.chave = 2;
   inserirNo(item, &arv);
+
+  printf("\nImprimindo Arvore...\n");
+  inOrdem(arv, imprimir);
 
   /*          18
           7       9
         1  6    5   2        
   */
 
+
  // Buscar item na arvore, usando a cahve como parametro de busca
   TIPOCHAVE ch = 2;
   if (obterItem(ch, &item2, arv))
-    printf("Ok: obtido o dado do No com chave = %d\n", item2.chave);
+    printf("\n\nConseguimos obter o dado do No com chave = %d\n", item2.chave);
   else
-    printf("Erro: nao foi obtido o dado do No com chave = %d\n", ch);
-
+    printf("\n\nErro: nao foi obtido o dado do No com chave = %d\n", ch);
 
   // Altera uma chave da arvore, e reorganiza ela a partir daquele determinado NO
+  printf("\nAlterando chave 2 para 25\n");
   item2.chave = 25;
   alterarItem(item, item2, &arv);
+  
 
   /*          25
           7       18
         1  6    5   9        
   */
+  printf("\nImprimindo Arvore...\n");
+  inOrdem(arv, imprimir);
+
+  printf("\n\nRemovendo 25\n");
+  removerNo(25, &arv, false);
+  
+
+  /*          18
+          7       9
+        1  6    5           
+  */
+
+  printf("\nImprimindo Arvore...\n");
+  inOrdem(arv, imprimir);
+
+  printf("\n\nRemovendo 1\n");
+  removerNo(1, &arv, false);
+
+  /*          18
+          7       9
+        5  6               
+  */
   
   //Mostrar arvore completa
+  printf("\nImprimindo Arvore...\n");
+  inOrdem(arv, imprimir);
+
+  printf("\n\nRemovendo 9\n");
+  removerNo(9, &arv, false);
+
+  /*          18
+          7       6
+        5                 
+  */
+  
+  //Mostrar arvore completa
+  printf("\nImprimindo Arvore...\n");
   inOrdem(arv, imprimir);
 
   //limpar arvore da memoria
