@@ -199,12 +199,14 @@ int main() {
     inserir(heap, 15);
     inserir(heap, 30);
     inserir(heap, 40);
+    printf("\n");
     printf("MAX =======================\n");
     AmostraArvore(heap);
     AmostraMax(heap);
     Cauda(heap);
     inserir(heap, 5);
     AmostraArvore(heap);
+    printf("\n");
     printf("MAX =======================\n");
     int max = DeletaMax(heap);
     AmostraMax(heap);
@@ -213,19 +215,21 @@ int main() {
     deleteHeap(heap);
 
     MinHeap *heapm = inicializarM();
-
+    printf("\n");
     printf("\n\nMIN =======================\n");
     inserirM(heapm, 10);
     inserirM(heapm, 20);
     inserirM(heapm, 15);
     inserirM(heapm, 30);
     inserirM(heapm, 40);
+    printf("\n");
     printf("MIN =======================\n");
     AmostarArvoreM(heapm);
     AmostraMin(heapm);
     CaudaM(heapm);
     inserirM(heapm, 5);
     AmostarArvoreM(heapm);
+    printf("\n");
     printf("MIN =======================\n");
     int min = DeletaMin(heapm);
 
