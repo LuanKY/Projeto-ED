@@ -138,7 +138,7 @@ void AmostarArvoreM(MinHeap *heap) {
         printf("%d ", heap->itens[i]);
     }
     printf("\n");
-    TamanhoM(heap);
+    Tamanho(heap);
 }
 
 
