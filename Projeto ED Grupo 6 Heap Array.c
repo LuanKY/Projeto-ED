@@ -28,6 +28,9 @@ Heap* inicializar() {
 void Tamanho(Heap *heap){
     printf("Tamanho: %d\n", heap->tamanho);
 }
+void TamanhoM(MinHeap *heap){
+    printf("Tamanho: %d\n", heap->tamanho);
+}
 
 void ajuste(int *a, int *b) {
     int aux = *a;
@@ -138,7 +141,7 @@ void AmostarArvoreM(MinHeap *heap) {
         printf("%d ", heap->itens[i]);
     }
     printf("\n");
-    Tamanho(heap);
+    TamanhoM(heap);
 }
 
 
