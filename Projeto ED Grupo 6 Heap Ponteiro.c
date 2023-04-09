@@ -19,12 +19,10 @@ typedef struct estrutura {
   struct estrutura *pai;
 } HEAP;
 
-
 // Retorna true se a arvore esta vazia (igual a NULL)
 bool vazia(HEAP *arvore) {
   return arvore == NULL;
 }
-
 
 /*
 | Objetivos: Cria um novo NO usando o apontador arvore passado contendo o item,
@@ -43,7 +41,6 @@ void criarNo(ITEM item, HEAP **arvore) {
   (*arvore)->esq = NULL;
   (*arvore)->dir = NULL;
 }
-
 
 // Testa se o No indicado por Direcao a partir de arv existe
 bool existeNo(DIRECAO direcao, HEAP *arvore) {
@@ -65,7 +62,6 @@ bool existeNo(DIRECAO direcao, HEAP *arvore) {
   return false;
 }
 
-
 // Deslocar o apontador Arvore para o No indicado por Direcao
 void deslocar(DIRECAO direcao, HEAP **arvore) {
   if (direcao == NoRaiz) {
@@ -83,7 +79,6 @@ void deslocar(DIRECAO direcao, HEAP **arvore) {
     *arvore = (*arvore)->dir;
 }
 
-
 /* Verifica se a arvore possui filho a esquerda e a direita */
 bool arvoreCompleta(HEAP *arvore) {
   if (vazia(arvore))
@@ -93,7 +88,6 @@ bool arvoreCompleta(HEAP *arvore) {
   } else
     return false;
 }
-
 
 /* Verifica se a arvore possui filho a esquerda */
 bool arvoreQuaseCompleta(HEAP *arvore) {
@@ -112,7 +106,6 @@ bool arvoreImcompleta(HEAP *arvore) {
   else
     return false;
 }
-
 
 /*
 | Objetivo: Percorrer a arvore, da subarvore esquerda para a subarvore,
@@ -140,7 +133,6 @@ HEAP* ultimoNo(HEAP* arvore, HEAP* ultimo) {
   }
 }
 
-
 /*
 | Objetivo: Percorrer a arvore pelo lado esquerdo e apos achar o
 |           NO mais inferior a esquerda, retorna ele
@@ -154,8 +146,6 @@ HEAP* primeiroNo(HEAP* no) {
   }
   return no;
 }
-
-
 
 // Cria um filho no NO apontado por Arvore na direcao informada
 bool adicionarFilho(ITEM item, DIRECAO direcao, HEAP *arvore) {
@@ -174,7 +164,6 @@ bool adicionarFilho(ITEM item, DIRECAO direcao, HEAP *arvore) {
   return true;
 }
 
-
 // Desaloca da memoria toda a arvore
 void disposeArvore(HEAP *arvore) {
   if (!vazia(arvore)) {
@@ -183,7 +172,6 @@ void disposeArvore(HEAP *arvore) {
     free(arvore);
   }
 }
-
 
 /*
 | Objetivo: Percorrer a arvore, visitando primeiro a subarvore esquerda,
@@ -197,12 +185,10 @@ void inOrdem(HEAP *arvore, void (*visite)(HEAP*) ) {
   }
 }
 
-
 // Visita um NO da arvore, imprimindo o valor da chave entre parenteses
 void imprimir(HEAP *arvore) {
   printf("\nChave do NO: (%d) Nivel do NO: (%d)", arvore->item.chave, arvore->nivel);
 }
-
 
 /*
 | Objetivo: Retornar true se a chave for encontrada. Neste caso, noDoItem
@@ -227,7 +213,6 @@ bool encontrarChave(TIPOCHAVE chave, HEAP **noDoItem, HEAP *arvore) {
   else
     return false;
 }
-
 
 /*
 | Objetivo: Partindo de um dado NO, verifica se a chave dele é menor
@@ -303,7 +288,6 @@ void heapify(HEAP *no) {
   }
 }
 
-
 /*
 | Objetivo: Percorrer a arvore ate encontrar a posicao de insercao, que sera a posicao
 |           que fará com que a arvore heap continue sendo completa ou quase completa, 
@@ -328,7 +312,6 @@ void encontraPos(HEAP *arvore, HEAP **local) {
   return;
 }
 
-
 /*
 | Objetivo: Inserir o item passado na posicao de insercao correta,
 |           posicao essa, que e obtido atraves da funcao encontraPos.
@@ -349,7 +332,6 @@ void inserirNo(ITEM item, HEAP **arvore) {
 
   deslocar(NoRaiz, arvore); // Garante que a arvore sempre seja utilizada a partir de sua raiz
 }
-
 
 /*
 | Objetivo: Procurar um No que contenha uma chave igual a passada. Caso
@@ -513,7 +495,6 @@ bool removerNo(TIPOCHAVE chave, HEAP **arvore, bool recursao) {
   return true;
 }
 
-
 /*
 | Objetivo: Procurar um No que contenha uma chave igual a passada. Caso
 |           encontre, copia o dado do No em item e retorna true. Se
@@ -530,7 +511,6 @@ bool obterItem(TIPOCHAVE chave, ITEM *item, HEAP *arvore) {
   }
 }
 
-
 /*
 | Objetivo: Procurar um No que contenha uma chave igual itemAnt. Caso
 |           encontre, copia itemAtual sobre o item do No e retorna true. Se
@@ -545,12 +525,6 @@ void alterarItem(ITEM itemAnt, ITEM itemAtual, HEAP **arvore) {
     deslocar(NoRaiz, arvore); // Garante que a arvore sempre seja utilizada a partir de sua raiz
   }
 }
-
-
-
-
-
-/////////////////////////////////////////////////////
 
 int main() {
   HEAP *arv = NULL;
@@ -587,7 +561,6 @@ int main() {
         1  6    5   2        
   */
 
-
  // Buscar item na arvore, usando a cahve como parametro de busca
   TIPOCHAVE ch = 2;
   if (obterItem(ch, &item2, arv))
@@ -600,7 +573,6 @@ int main() {
   item2.chave = 25;
   alterarItem(item, item2, &arv);
   
-
   /*          25
           7       18
         1  6    5   9        
@@ -610,7 +582,6 @@ int main() {
 
   printf("\n\nRemovendo 25\n");
   removerNo(25, &arv, false);
-  
 
   /*          18
           7       9
