@@ -103,7 +103,7 @@ void heapifyDelM(MinHeap *heap, int i) {
 }
 
 
-int DeletaMax(Heap* heap) {
+int Deleta(Heap* heap) {
     if (heap->tamanho == 0) {
         printf("Arvore Vazia!\n");
         return -1;
@@ -114,17 +114,7 @@ int DeletaMax(Heap* heap) {
     printf("Deletado: %d\n", max);
     return max;
 }
-int DeletaMin(MinHeap *heap) {
-    if (heap->tamanho == 0) {
-        printf("Heap vazia\n");
-        return -1;
-    }
-    int min = heap->itens[0];
-    heap->itens[0] = heap->itens[--heap->tamanho];
-    heapifyDelM(heap, 0);
-    printf("Deletado: %d\n", min);
-    return min;
-}
+
 
 
 void AmostraArvore(Heap* heap) {
@@ -135,36 +125,14 @@ void AmostraArvore(Heap* heap) {
     printf("\n");
     Tamanho(heap);
 }
-void AmostarArvoreM(MinHeap *heap) {
-    printf("Min Heap: ");
-    for (int i = 0; i < heap->tamanho; i++) {
-        printf("%d ", heap->itens[i]);
-    }
-    printf("\n");
-    TamanhoM(heap);
-}
-
-
-void AmostraMax(Heap *heap){
+void AmostraRaiz(Heap *heap){
     if(heap->tamanho == 0){
         printf("Arvore Vazia!");}
     else{
-        printf("Max: %d\n", heap->itens[0]);}
-    }
-void AmostraMin(MinHeap *heap){
-    if(heap->tamanho == 0){
-        printf("Arvore Vazia!");}
-    else{
-        printf("Min: %d\n", heap->itens[0]);}
+        printf("Raiz: %d\n", heap->itens[0]);}
     }
 
 void Cauda(Heap *heap){
-    if(heap->tamanho == 0){
-        printf("Arvore Vazia!");}
-    else{
-        printf("Cauda: %d\n", heap->itens[heap->tamanho-1]);}
-    }
-void CaudaM(MinHeap *heap){
     if(heap->tamanho == 0){
         printf("Arvore Vazia!");}
     else{
@@ -176,15 +144,8 @@ void deleteHeap(Heap *heap) {
         return;
     }
     free(heap->itens);
-    free(heap);
-}
-void deleteHeapM(MinHeap *heap) {
-    if (heap == NULL) {
-        return;
-    }
-    free(heap->itens);
-    free(heap);
-}
+    free(heap);}
+
 
 int main() {
 
@@ -199,14 +160,14 @@ int main() {
     printf("\n");
     printf("MAX =======================\n");
     AmostraArvore(heap);
-    AmostraMax(heap);
+    AmostraRaiz(heap);
     Cauda(heap);
     inserir(heap, 5);
-    AmostraArvore(heap);
+    AmostraRaiz(heap);
     printf("\n");
     printf("MAX =======================\n");
-    int max = DeletaMax(heap);
-    AmostraMax(heap);
+    int max = Deleta(heap);
+    AmostraRaiz(heap);
     AmostraArvore(heap);
 
     deleteHeap(heap);
@@ -221,18 +182,17 @@ int main() {
     inserirM(heapm, 40);
     printf("\n");
     printf("MIN =======================\n");
-    AmostarArvoreM(heapm);
-    AmostraMin(heapm);
-    CaudaM(heapm);
+    AmostraArvore(heapm);
+    AmostraRaiz(heapm);
+    Cauda(heapm);
     inserirM(heapm, 5);
-    AmostarArvoreM(heapm);
+    AmostraArvore(heapm);
     printf("\n");
     printf("MIN =======================\n");
-    int min = DeletaMin(heapm);
+    int min = Deleta(heapm);
 
-    AmostraMin(heapm);
-    AmostarArvoreM(heapm);
+    AmostraRaiz(heapm);
+    AmostraArvore(heapm);
 
-    deleteHeapM(heapm);
-    return 0;
-}
+    deleteHeap(heapm);
+    return 0;}
