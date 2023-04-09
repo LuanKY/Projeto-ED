@@ -28,14 +28,33 @@ Heap* inicializar() {
 void Tamanho(Heap *heap){
     printf("Tamanho: %d\n", heap->tamanho);
 }
-void TamanhoM(MinHeap *heap){
-    printf("Tamanho: %d\n", heap->tamanho);
-    }
 
 void ajuste(int *a, int *b) {
     int aux = *a;
     *a = *b;
     *b = aux;
+}
+
+void inserir(Heap* heap, int chave) {
+    if (heap->tamanho == MAX) {
+        printf("Arvore Cheia!\n");
+        return;
+    }
+    else{
+        heap->itens[heap->tamanho++] = chave;
+        printf("Inserido: %d\n", chave);
+        HeapifyIns(heap, heap->tamanho - 1);
+    }
+
+}
+void inserirM(MinHeap *heap, int chave) {
+    if (heap->tamanho == MAX) {
+        printf("Heap Cheia\n");
+        return;
+    }
+    heap->itens[heap->tamanho++] = chave;
+    heapifyInsM(heap, heap->tamanho - 1);
+    printf("Inserido: %d\n", chave);
 }
 
 
@@ -80,29 +99,6 @@ void heapifyDelM(MinHeap *heap, int i) {
         ajuste(&heap->itens[i], &heap->itens[menor]);
         heapifyDelM(heap, menor);
     }
-}
-
-
-void inserir(Heap* heap, int chave) {
-    if (heap->tamanho == MAX) {
-        printf("Arvore Cheia!\n");
-        return;
-    }
-    else{
-        heap->itens[heap->tamanho++] = chave;
-        printf("Inserido: %d\n", chave);
-        HeapifyIns(heap, heap->tamanho - 1);
-    }
-
-}
-void inserirM(MinHeap *heap, int chave) {
-    if (heap->tamanho == MAX) {
-        printf("Heap Cheia\n");
-        return;
-    }
-    heap->itens[heap->tamanho++] = chave;
-    heapifyInsM(heap, heap->tamanho - 1);
-    printf("Inserido: %d\n", chave);
 }
 
 
