@@ -352,26 +352,6 @@ void inserirNo(ITEM item, HEAP **arvore) {
 
 
 /*
-| Objetivo: Captura o ultimo NO da arvore, e caso ele possua pai,
-|           faz com que o seu pai aponte pra NULL pelo lado certo, 
-|           apos isso re-insere esse no na arvore
-*/
-void ajuste(HEAP **arvore) {
-  HEAP *ultimo = ultimoNo(*arvore, NULL);
-
-  if (ultimo->pai != NULL) {
-    if (ultimo->pai->esq == ultimo) // Verifica se o avo do NO aponta para ele pelo lado esquerdo, e caso aponte, faz com que esse avo aponte para seu pai pelo lado esquerdo
-      ultimo->pai->esq = NULL;
-    if (ultimo->pai->dir == ultimo) // Verifica se o avo do NO aponta para ele pelo lado direito, e caso aponte, faz com que esse avo aponte para seu pai pelo lado direito
-      ultimo->pai->dir = NULL;
-    
-    inserirNo(ultimo->item, arvore);
-    free(ultimo);
-  }
-}
-
-
-/*
 | Objetivo: Procurar um No que contenha uma chave igual a passada. Caso
 |           encontre, move ele para que se torne uma folha da arvore e
 |           depois limpa da memoria, apos isso reorganiza a arvore,
