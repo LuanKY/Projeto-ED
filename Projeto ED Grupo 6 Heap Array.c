@@ -104,7 +104,7 @@ void heapifyDelM(MinHeap *heap, int i) {
         heapifyDelM(heap, menor);
     }
 }
-
+/*Deleta a raiz da arvore e reogarniza com o heapify*/
 int DeletaMax(Heap* heap) {
     if (heap->tamanho == 0) {
         printf("Arvore Vazia!\n");
