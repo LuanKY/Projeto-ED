@@ -28,7 +28,6 @@ Heap* inicializar() {
 int Tamanho(Heap *heap){
     printf("Tamanho: %d\n", heap->tamanho);
 }
-
 /*Função: troca de ponteiros para percorrer a arvore*/
 void ajuste(int *a, int *b) {
     int aux = *a;
@@ -42,13 +41,15 @@ void HeapifyIns(Heap* heap, int i) {
     int pai = (i - 1) / 2;
     while (i > 0 && heap->itens[i] > heap->itens[pai]) {
         ajuste(&heap->itens[i], &heap->itens[pai]);
+        i = pai;
         pai = (i - 1) / 2; // novo pai do elemento pós troca
 
     }
 }
 void heapifyInsM(MinHeap *heap, int i) {
-    while (i > 0 && heap->itens[(i - 1) / 2] > heap->itens[i]) {
-        ajuste(&heap->itens[(i - 1) / 2], &heap->itens[i]);
+    int pai = (i - 1) / 2;
+    while (i > 0 && heap->itens[pai] > heap->itens[i]) {
+        ajuste(&heap->itens[pai], &heap->itens[i]);
         i = (i - 1) / 2;}}
 
 /*Dado um valor chave o item é inserido no final da arvore*/
@@ -104,7 +105,7 @@ void heapifyDelM(MinHeap *heap, int i) {
         heapifyDelM(heap, menor);
     }
 }
-/*Deleta a raiz da arvore e reogarniza com o heapify*/
+
 int DeletaMax(Heap* heap) {
     if (heap->tamanho == 0) {
         printf("Arvore Vazia!\n");
