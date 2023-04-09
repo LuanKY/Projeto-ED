@@ -99,7 +99,7 @@ bool arvoreQuaseCompleta(HEAP *arvore) {
     return false;
 }
 
-/* Verifica se a arvore possui nao possui filhos */
+/* Verifica se a arvore nao possui filhos */
 bool arvoreImcompleta(HEAP *arvore) {
   if (!existeNo(NoEsquerdo, arvore) && !existeNo(NoDireito, arvore))
     return true;
