@@ -25,9 +25,13 @@ Heap* inicializar() {
     return heap;
 }
 
-int Tamanho(Heap *heap){
+void Tamanho(Heap *heap){
     printf("Tamanho: %d\n", heap->tamanho);
 }
+void TamanhoM(MinHeap *heap){
+    printf("Tamanho: %d\n", heap->tamanho);
+}
+
 /*Função: troca de ponteiros para percorrer a arvore*/
 void ajuste(int *a, int *b) {
     int aux = *a;
@@ -106,6 +110,8 @@ void heapifyDelM(MinHeap *heap, int i) {
     }
 }
 
+/*Apaga o elemento da raiz da arvore e reorganiza para manter a propriedade*/
+
 int DeletaMax(Heap* heap) {
     if (heap->tamanho == 0) {
         printf("Arvore Vazia!\n");
@@ -130,6 +136,7 @@ int DeletaMin(MinHeap *heap) {
 }
 
 
+
 void AmostraArvore(Heap* heap) {
     if(heap->tamanho == 0){
         printf("Arvore Vazia!\n");
@@ -141,27 +148,30 @@ void AmostraArvore(Heap* heap) {
     }
     printf("\n");
     }
-
+    Tamanho(heap);
+}
+void AmostarArvoreM(MinHeap *heap) {
+    if(heap->tamanho == 0){
+        printf("Arvore Vazia!\n");
+    }
+    else{
+    printf("Heap: ");
+    for (int i = 0; i < heap->tamanho; i++) {
+        printf("%d ", heap->itens[i]);
+    }
+    printf("\n");
+    }
     Tamanho(heap);
 }
 
-
-void AmostraRaiz(Heap *heap){
-    if(heap->tamanho == 0){
-        printf("Arvore Vazia!");}
-    else{
-        printf("Raiz: %d\n", heap->itens[0]);}
-    }
-
-void Cauda(Heap *heap){
-    if(heap->tamanho == 0){
-        printf("Arvore Vazia!");}
-    else{
-        printf("Cauda: %d\n", heap->itens[heap->tamanho-1]);}
-    }
-
-
 void deleteHeap(Heap *heap) {
+    if (heap == NULL) {
+        return;
+    }
+    free(heap->itens);
+    free(heap);
+}
+void deleteHeapM(MinHeap *heap) {
     if (heap == NULL) {
         return;
     }
@@ -182,23 +192,16 @@ int main() {
     printf("\n");
     printf("MAX =======================\n");
     AmostraArvore(heap);
-    AmostraRaiz(heap);
-    Cauda(heap);
     inserir(heap, 5);
     AmostraArvore(heap);
     printf("\n");
     printf("MAX =======================\n");
     DeletaMax(heap);
-    AmostraRaiz(heap);
     AmostraArvore(heap);
-
     for(int i = 0; heap->tamanho != 0; i++){
         printf("\nMAX =======================\n");
         DeletaMax(heap);
-        AmostraArvore(heap);
-    }
-
-
+        AmostraArvore(heap);}
     deleteHeap(heap);
 
     MinHeap *heapm = inicializarM();
@@ -211,23 +214,19 @@ int main() {
     inserirM(heapm, 40);
     printf("\n");
     printf("MIN =======================\n");
-    AmostraArvore(heapm);
-    AmostraRaiz(heapm);
-    Cauda(heapm);
+    AmostarArvoreM(heapm);
     inserirM(heapm, 5);
-    AmostraArvore(heapm);
+    AmostarArvoreM(heapm);
     printf("\n");
     printf("MIN =======================\n");
     DeletaMin(heapm);
 
-    AmostraRaiz(heapm);
-    AmostraArvore(heapm);
-
+    AmostarArvoreM(heapm);
     for(int i = 0; heap->tamanho != 0; i++){
         printf("\nMIN =======================\n");
         DeletaMin(heapm);
         AmostraArvore(heapm);
     }
-    deleteHeap(heapm);
+    deleteHeapM(heapm);
     return 0;
 }
