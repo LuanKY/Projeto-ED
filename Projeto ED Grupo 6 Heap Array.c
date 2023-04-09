@@ -25,23 +25,23 @@ Heap* inicializar() {
     return heap;
 }
 
-void Tamanho(Heap *heap){
-    printf("Tamanho: %d\n", heap->tamanho);
-}
-void TamanhoM(MinHeap *heap){
+int Tamanho(Heap *heap){
     printf("Tamanho: %d\n", heap->tamanho);
 }
 
+/*Função: troca de ponteiros para percorrer a arvore*/
 void ajuste(int *a, int *b) {
     int aux = *a;
     *a = *b;
     *b = aux;
 }
-void HeapifyIns(Heap* heap, int i) { // i = indice  Função: Reajustar os elementos da arvore para manter as propriedades pós inserção
-    int pai = (i - 1) / 2; // operação para encontrar o indice do pai do nó inserido
-    while (i > 0 && heap->itens[i] > heap->itens[pai]) { // Enquanto o item inserido for maior que o pai ele  sobe a arvore com os ajustes
-        ajuste(&heap->itens[i], &heap->itens[pai]); // troca o indice do item com o pai
-        i = pai;
+
+/*reoganiza a arvore de forma que obedeça as propriedades de uma heap*/
+
+void HeapifyIns(Heap* heap, int i) {
+    int pai = (i - 1) / 2;
+    while (i > 0 && heap->itens[i] > heap->itens[pai]) {
+        ajuste(&heap->itens[i], &heap->itens[pai]);
         pai = (i - 1) / 2; // novo pai do elemento pós troca
 
     }
@@ -50,6 +50,8 @@ void heapifyInsM(MinHeap *heap, int i) {
     while (i > 0 && heap->itens[(i - 1) / 2] > heap->itens[i]) {
         ajuste(&heap->itens[(i - 1) / 2], &heap->itens[i]);
         i = (i - 1) / 2;}}
+
+/*Dado um valor chave o item é inserido no final da arvore*/
 
 void inserir(Heap* heap, int chave) {
     if (heap->tamanho == MAX) {
@@ -73,15 +75,16 @@ void inserirM(MinHeap *heap, int chave) {
     printf("Inserido: %d\n", chave);
 }
 
+/*Função: Ajusta os elementos para que as propridades sejam aceitas pós remoção*/
 
-void HeapifyDel(Heap* heap, int i) { // i = indice  Função: Ajusta os elementos para que as propridades sejam aceitas pós remoção
-    int esq = 2 * i + 1; // Operação para descobrir o indice do filho esquerdo
-    int dir = 2 * i + 2;// Operação para descobrir o indice do filho direito
+void HeapifyDel(Heap* heap, int i) { // i = indice
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
     int maior = i;
     if (esq < heap->tamanho && heap->itens[esq] > heap->itens[maior]) { // compara se o elemento esquerdo é maior que o seu indice  superior
         maior = esq;}
-    if (dir < heap->tamanho && heap->itens[dir] > heap->itens[maior]) {
-        maior = dir;}// compara se o elemento direito é maior que o seu indice  superior
+    if (dir < heap->tamanho && heap->itens[dir] > heap->itens[maior]) {// compara se o elemento direito é maior que o seu indice  superior
+        maior = dir;}
     if (maior != i) { // Se houve alguma alteração o item é ajustado com o seu superior
         ajuste(&heap->itens[i], &heap->itens[maior]);
         HeapifyDel(heap, maior);}
@@ -102,8 +105,7 @@ void heapifyDelM(MinHeap *heap, int i) {
     }
 }
 
-
-int Deleta(Heap* heap) {
+int DeletaMax(Heap* heap) {
     if (heap->tamanho == 0) {
         printf("Arvore Vazia!\n");
         return -1;
@@ -114,17 +116,35 @@ int Deleta(Heap* heap) {
     printf("Deletado: %d\n", max);
     return max;
 }
-
+int DeletaMin(MinHeap *heap) {
+    if (heap->tamanho == 0) {
+        printf("Heap vazia\n");
+        return -1;
+    }
+    int min = heap->itens[0];
+    heap->itens[0] = heap->itens[--heap->tamanho];
+    heapifyDelM(heap, 0);
+    printf("Deletado: %d\n", min);
+    return min;
+}
 
 
 void AmostraArvore(Heap* heap) {
+    if(heap->tamanho == 0){
+        printf("Arvore Vazia!\n");
+    }
+    else{
     printf("Heap: ");
     for (int i = 0; i < heap->tamanho; i++) {
         printf("%d ", heap->itens[i]);
     }
     printf("\n");
+    }
+
     Tamanho(heap);
 }
+
+
 void AmostraRaiz(Heap *heap){
     if(heap->tamanho == 0){
         printf("Arvore Vazia!");}
@@ -139,13 +159,14 @@ void Cauda(Heap *heap){
         printf("Cauda: %d\n", heap->itens[heap->tamanho-1]);}
     }
 
+
 void deleteHeap(Heap *heap) {
     if (heap == NULL) {
         return;
     }
     free(heap->itens);
-    free(heap);}
-
+    free(heap);
+}
 
 int main() {
 
@@ -163,12 +184,19 @@ int main() {
     AmostraRaiz(heap);
     Cauda(heap);
     inserir(heap, 5);
-    AmostraRaiz(heap);
+    AmostraArvore(heap);
     printf("\n");
     printf("MAX =======================\n");
-    int max = Deleta(heap);
+    DeletaMax(heap);
     AmostraRaiz(heap);
     AmostraArvore(heap);
+
+    for(int i = 0; heap->tamanho != 0; i++){
+        printf("\nMAX =======================\n");
+        DeletaMax(heap);
+        AmostraArvore(heap);
+    }
+
 
     deleteHeap(heap);
 
@@ -189,10 +217,16 @@ int main() {
     AmostraArvore(heapm);
     printf("\n");
     printf("MIN =======================\n");
-    int min = Deleta(heapm);
+    DeletaMin(heapm);
 
     AmostraRaiz(heapm);
     AmostraArvore(heapm);
 
+    for(int i = 0; heap->tamanho != 0; i++){
+        printf("\nMIN =======================\n");
+        DeletaMin(heapm);
+        AmostraArvore(heapm);
+    }
     deleteHeap(heapm);
-    return 0;}
+    return 0;
+}
